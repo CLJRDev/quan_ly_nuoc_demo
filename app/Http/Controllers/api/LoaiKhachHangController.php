@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\LoaiKhachHang;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class LoaiKhachHangController extends Controller
 {
@@ -28,7 +29,7 @@ class LoaiKhachHangController extends Controller
   {
     //Validation
     $formFields = $request->validate([
-      'ten_loai_khach_hang' => 'required'
+      'ten_loai_khach_hang' => 'required|unique:loai_khach_hangs,ten_loai_khach_hang'
     ]);
 
     LoaiKhachHang::create($formFields);
@@ -58,7 +59,10 @@ class LoaiKhachHangController extends Controller
   public function update(Request $request, LoaiKhachHang $loaiKhachHang)
   {
     $formFields = $request->validate([
-      'ten_loai_khach_hang' => 'required'
+      'ten_loai_khach_hang' => [
+        'required',
+        Rule::unique('loai_khach_hangs', 'ten_loai_khach_hang')->ignore($loaiKhachHang->id)
+      ]
     ]);
 
     $loaiKhachHang->update($formFields);

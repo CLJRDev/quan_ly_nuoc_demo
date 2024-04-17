@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\NhomGia;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class NhomGiaController extends Controller
 {
@@ -47,9 +48,10 @@ class NhomGiaController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function show(NhomGia $nhomGia)
+  public function show($id)
   {
-    return $nhomGia;
+    $nhom_gia = NhomGia::find($id);
+    return $nhom_gia;
   }
 
   /**
@@ -59,18 +61,26 @@ class NhomGiaController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function update(Request $request, NhomGia $nhomGia)
+  public function update(Request $request, $id)
   {
+    $nhom_gia = NhomGia::find($id);
     $formFields = $request->validate([
-      'ten_nhom_gia' => 'required|unique:nhom_gias,ten_nhom_gia',
+      'ten_nhom_gia' => [
+        'required',
+        Rule::unique('nhom_gias', 'ten_nhom_gia')->ignore($nhom_gia->id)
+
+      ],
       'gia_duoi_10m' => 'required',
       'gia_tu_10m_den_20m' => 'required',
       'gia_tu_20m_den_30m' => 'required',
       'gia_tren_30m' => 'required',
-      'ma_loai_khach_hang' => 'required|unique:nhom_gias,ma_loai_khach_hang'
+      'ma_loai_khach_hang' => [
+        'required',
+        Rule::unique('nhom_gias', 'ma_loai_khach_hang')->ignore($nhom_gia->id)
+      ]
     ]);
 
-    $nhomGia->update($formFields);
+    $nhom_gia->update($formFields);
     return response()->json([
       'message' => 'Updated successfully!'
     ]);
@@ -82,9 +92,10 @@ class NhomGiaController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function destroy(NhomGia $nhomGia)
+  public function destroy($id)
   {
-    $nhomGia->delete();
+    $nhom_gia = NhomGia::find($id);
+    $nhom_gia->delete();
     return response()->json([
       'message' => 'Deleted successfully!'
     ]);

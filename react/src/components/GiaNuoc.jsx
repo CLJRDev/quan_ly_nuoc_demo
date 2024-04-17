@@ -16,9 +16,9 @@ export default function GiaNuoc(){
   }, [])
 
   const xoaNhomGia = id => {
-    if(!window.confirm('Bạn có chắc chắn muốn xóa nhóm này?'))
+    if(!window.confirm('Bạn có chắc chắn muốn xóa nhóm giá này?'))
       return
-    axios.delete(`http://127.0.0.1:8000/api/gia/${id}`)
+    axios.delete(`http://127.0.0.1:8000/api/nhom_gia/${id}`)
     .then(response => {
       console.log(response.data.message);
       setNhomGias(nhomGias.filter(nhomGia => {

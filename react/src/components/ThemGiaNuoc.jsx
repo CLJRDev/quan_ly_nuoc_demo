@@ -34,9 +34,9 @@ export default function ThemGiaNuoc(){
 
   function handleChange(e){
     const {name, value} = e.target;
-    setNhomGia(preProduct => {
+    setNhomGia(preNhomGia => {
       return {
-        ...preProduct,
+        ...preNhomGia,
         [name]: value
       }
     });
