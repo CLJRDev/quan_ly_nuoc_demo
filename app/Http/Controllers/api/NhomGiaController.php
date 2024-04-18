@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\NhomGia;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class NhomGiaController extends Controller
 {
@@ -27,19 +28,25 @@ class NhomGiaController extends Controller
    */
   public function store(Request $request)
   {
-    $formFields = $request->validate([
-      'ten_nhom_gia' => 'required|unique:nhom_gias,ten_nhom_gia',
-      'gia_duoi_10m' => 'required',
-      'gia_tu_10m_den_20m' => 'required',
-      'gia_tu_20m_den_30m' => 'required',
-      'gia_tren_30m' => 'required',
-      'ma_loai_khach_hang' => 'required|unique:nhom_gias,ma_loai_khach_hang'
-    ]);
+    try {
+      $formFields = $request->validate([
+        'ten_nhom_gia' => 'required|unique:nhom_gias,ten_nhom_gia',
+        'gia_duoi_10m' => 'required',
+        'gia_tu_10m_den_20m' => 'required',
+        'gia_tu_20m_den_30m' => 'required',
+        'gia_tren_30m' => 'required',
+        'ma_loai_khach_hang' => 'required|unique:nhom_gias,ma_loai_khach_hang'
+      ]);
 
-    NhomGia::create($formFields);
-    return response()->json([
-      'message' => 'Created successfully!'
-    ]);
+      NhomGia::create($formFields);
+      return response()->json([
+        'message' => 'Created successfully!'
+      ]);
+    } catch (ValidationException $e) {
+      return response()->json([
+        'error' => 'Đã tồn tại tên nhóm giá hoặc loại khách hàng này!'
+      ], 422);
+    }
   }
 
   /**

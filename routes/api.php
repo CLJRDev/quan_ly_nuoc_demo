@@ -20,3 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::apiResource('loai_khach_hang', 'App\Http\Controllers\api\LoaiKhachHangController');
 Route::apiResource('nhom_gia', 'App\Http\Controllers\api\NhomGiaController');
+Route::apiResource('tuyen_doc', 'App\Http\Controllers\api\TuyenDocController');
+Route::apiResource('kich_co', 'App\Http\Controllers\api\KichCoController');
+Route::apiResource('dong_ho_khoi', 'App\Http\Controllers\api\DongHoKhoiController');
+Route::apiResource('ghi_chi_so_dong_ho_khoi', 'App\Http\Controllers\api\GhiChiSoDongHoKhoiController');

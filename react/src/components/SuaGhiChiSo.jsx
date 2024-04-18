@@ -1,58 +1,54 @@
 import { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import axios from "axios"
 
-
 export default function SuaGhiChiSo(){
+  const {id} = useParams()
+  const [lichSu, setLichSu] = useState('')
+  const [chiSoMoi, setChiSoMoi] = useState('')
+  
+  useEffect(() => {
+    axios.get(`http://127.0.0.1:8000/api/ghi_chi_so_dong_ho_khoi/${id}`)
+      .then(response => {
+        setLichSu(response.data.lich_su)
+      })
+  },[])
+
+  function handleChange(e){
+    setChiSoMoi(e.target.value)
+  }
+
+  const suaChiSo = async() => {
+    const formData = new FormData()
+    formData.append('_method', 'PUT')
+    formData.append('chi_so_moi', chiSoMoi)
+    const response = await axios.post(`http://127.0.0.1:8000/api/ghi_chi_so_dong_ho_khoi/${id}`, formData)
+    if(response){
+      console.log(response.data)
+      window.history.back()
+    }
+  }
+
+  const handleSubmit = async(e) => {
+    e.preventDefault()
+    await suaChiSo()
+  }
+
   return (
     <div className='page-container'>
       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-        <h2>Cập nhật ghi chỉ số đồng hồ khối</h2>
-        {/* <Link to='/gia/them' className="btn-add">Thêm mới</Link> */}
+        <h2>Sửa chỉ số đồng hồ khối: {lichSu.ma_dong_ho}, Kỳ chỉ số: {lichSu.ky_chi_so}</h2>
       </div>      
       <div className='card animated fadeInDown'>
-        <div style={{display: 'flex', justifyContent: 'space-between'}}>
-          <input type="text" placeholder="Mã lịch sử"/>
-          <input style={{marginLeft: '15px'}} type="text" placeholder="Mã đồng hồ khối"/>
-        </div>
-        <div style={{display: 'flex', justifyContent: 'space-between'}}>
-          <input type="text" placeholder="Chỉ số cũ"/>
-          <input type="text" style={{marginLeft: '15px'}} placeholder="Chỉ số mới"/>
-        </div>
-        <div style={{display: 'flex', justifyContent: 'space-between'}}>
-          <input type="text" placeholder="Số tiêu thụ"/>
-          <input type="text" placeholder="Kỳ chỉ số" style={{marginLeft: '15px'}}/>
-        </div>
-        <div style={{display: 'flex', justifyContent: 'space-between'}}>
-          <input type="text" placeholder="Từ ngày"/>
-          <input type="text" placeholder="Đến ngày" style={{marginLeft: '15px'}}/>
-        </div>
-        <button className="btn-add">Sửa chỉ số</button>
-        {/* <div style={{display: 'flex', justifyContent: 'space-between'}}>          
-          <input type="text" placeholder='Mã nhóm giá' style={{marginBottom: '0'}}/>
-          <input type="text" placeholder='Tên nhóm giá'style={{marginLeft: '15px', marginBottom: '0'}}/>
-          <select name="" id="" style={{marginLeft: '15px', marginBottom: '0'}}>
-            <option value="">Chọn loại khách hàng</option>
-          </select>
-        </div>
-        <button className='btn-add' style={{marginBottom: '10px', marginTop: '10px'}}>Tìm kiếm</button>     */}
-        {/* <table>
-          <thead>
-            <tr>
-              <th style={{width: '50px', textAlign: 'center'}}>ID</th>
-              <th style={{textAlign: 'center'}}>Tên nhóm giá</th>
-              <th style={{textAlign: 'center'}}>Giá dưới 10m³</th>
-              <th style={{textAlign: 'center'}}>Giá từ 10m³ đến 20m³</th>
-              <th style={{textAlign: 'center'}}>Giá từ 20m³ đến 30m³</th>
-              <th style={{textAlign: 'center'}}>Giá trên 30m³</th>                            
-              <th style={{textAlign: 'center'}}>Loại khách hàng</th>                            
-              <th style={{width: '150px', textAlign: 'center'}}>Hành động</th>
-            </tr>
-          </thead>
-          <tbody>
-            {}
-          </tbody>
-        </table> */}
+        <form onSubmit={handleSubmit}>        
+          <input 
+            type="number" 
+            placeholder="Chỉ số mới"
+            value={chiSoMoi}
+            onChange={handleChange}
+          />
+          <button type="submit" className="btn-add">Sửa chỉ số</button>
+        </form>        
       </div>
     </div>
   )

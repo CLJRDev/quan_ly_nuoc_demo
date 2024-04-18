@@ -1,18 +1,60 @@
 import { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import axios from "axios"
+import {format} from 'date-fns'
 
 export default function LichSuGhiChiSo(){
+  const {id} = useParams()
+  const [dongHoKhoi, setDongHoKhoi] = useState('')
+  const [ghiChiSos, setGhiChiSos] = useState('')
+  
+  useEffect(() => {
+    axios.get(`http://127.0.0.1:8000/api/dong_ho_khoi/${id}`)
+      .then(response => {
+        setDongHoKhoi(response.data.data[0])
+        console.log(response.data.data[0])
+      })
+  }, [])
+
+  useEffect(() => {
+    axios.get(`http://127.0.0.1:8000/api/ghi_chi_so_dong_ho_khoi/${id}`)
+      .then(response => {
+        setGhiChiSos(response.data.ghi_chi_so)
+      }).catch(error => {
+        console.error('Error fetching data:', error);
+      })
+  }, [])
+  
+  if(!dongHoKhoi) return null
+  if(!ghiChiSos) return null
+  
+  let check = true;
+  const ghiChiSoElements = ghiChiSos.map(ghiChiSo => {
+    const editButton = check === true ? 
+    <Link to={`ghi_chi_so_dong_ho_khoi/sua/${ghiChiSo.id}`}><button className="btn-edit">Sửa</button></Link> : 
+    <button className="btn-edit-disable">Sửa</button>
+    check = false
+    return <tr key={ghiChiSo.id}>
+      <td style={{textAlign: 'center'}}>{ghiChiSo.id}</td>
+      <td style={{textAlign: 'center'}}>{dongHoKhoi.tuyen_doc.ten_tuyen}</td>
+      <td style={{textAlign: 'center'}}>{ghiChiSo.ky_chi_so}</td>
+      <td style={{textAlign: 'center'}}>{format(new Date(ghiChiSo.tu_ngay), 'dd-MM-yyyy')}</td>
+      <td style={{textAlign: 'center'}}>{format(new Date(ghiChiSo.den_ngay), 'dd-MM-yyyy')}</td>
+      <td style={{textAlign: 'center'}}>{ghiChiSo.chi_so_cu}</td>
+      <td style={{textAlign: 'center'}}>{ghiChiSo.chi_so_moi}</td>
+      <td style={{textAlign: 'center'}}>{ghiChiSo.so_tieu_thu}</td>
+      <td style={{textAlign: 'center'}}>
+        {editButton}
+      </td>
+    </tr>
+  })
+
   return (
     <div className='page-container'>
       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-        <h2>Lịch sử ghi chỉ số đồng hồ khối</h2>
-        {/* <Link to='/ghi_chi_so_dong_ho_khoi/ghi' className="btn-add">Ghi chỉ số</Link>         */}
+        <h2>Lịch sử ghi chỉ số đồng hồ khối: {id}</h2>
       </div>      
-      <div className='card animated fadeInDown'>
-        <div style={{display: 'flex', justifyContent: 'space-between'}}>          
-          <input type="text" placeholder='Mã đồng hồ'/>          
-        </div>
+      <div className='card animated fadeInDown'>        
         <table>
           <thead>
             <tr>
@@ -28,84 +70,7 @@ export default function LichSuGhiChiSo(){
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td style={{textAlign: 'center'}}>1</td>
-              <td style={{textAlign: 'center'}}>Tuyến đọc 1</td>
-              <td style={{textAlign: 'center'}}>T2 - 2024</td>
-              <td style={{textAlign: 'center'}}>01-02-2024</td>
-              <td style={{textAlign: 'center'}}>28-02-2024</td>
-              <td style={{textAlign: 'center'}}>005556</td>
-              <td style={{textAlign: 'center'}}>005580</td>
-              <td style={{textAlign: 'center'}}>24</td>
-              <td style={{textAlign: 'center'}}>
-                <button className="btn-edit">Sửa</button>                
-              </td>
-            </tr>
-            <tr>
-              <td style={{textAlign: 'center'}}>2</td>
-              <td style={{textAlign: 'center'}}>Tuyến đọc 1</td>
-              <td style={{textAlign: 'center'}}>T3 - 2024</td>
-              <td style={{textAlign: 'center'}}>01-03-2024</td>
-              <td style={{textAlign: 'center'}}>31-03-2024</td>
-              <td style={{textAlign: 'center'}}>005580</td>
-              <td style={{textAlign: 'center'}}>005590</td>
-              <td style={{textAlign: 'center'}}>10</td>
-              <td style={{textAlign: 'center'}}>
-                <button className="btn-edit">Sửa</button>                
-              </td>
-            </tr>
-            <tr>
-              <td style={{textAlign: 'center'}}>3</td>
-              <td style={{textAlign: 'center'}}>Tuyến đọc 1</td>
-              <td style={{textAlign: 'center'}}>T4 - 2024</td>
-              <td style={{textAlign: 'center'}}>01-04-2024</td>
-              <td style={{textAlign: 'center'}}>30-04-2024</td>
-              <td style={{textAlign: 'center'}}>005590</td>
-              <td style={{textAlign: 'center'}}>005615</td>
-              <td style={{textAlign: 'center'}}>25</td>
-              <td style={{textAlign: 'center'}}>
-                <button className="btn-edit">Sửa</button>                
-              </td>
-            </tr>
-            <tr>
-              <td style={{textAlign: 'center'}}>4</td>
-              <td style={{textAlign: 'center'}}>Tuyến đọc 1</td>
-              <td style={{textAlign: 'center'}}>T5 - 2024</td>
-              <td style={{textAlign: 'center'}}>01-05-2024</td>
-              <td style={{textAlign: 'center'}}>30-05-2024</td>
-              <td style={{textAlign: 'center'}}>005615</td>
-              <td style={{textAlign: 'center'}}>005630</td>
-              <td style={{textAlign: 'center'}}>15</td>
-              <td style={{textAlign: 'center'}}>
-                <button className="btn-edit">Sửa</button>                
-              </td>
-            </tr>
-            <tr>
-              <td style={{textAlign: 'center'}}>5</td>
-              <td style={{textAlign: 'center'}}>Tuyến đọc 1</td>
-              <td style={{textAlign: 'center'}}>T6 - 2024</td>
-              <td style={{textAlign: 'center'}}>01-06-2024</td>
-              <td style={{textAlign: 'center'}}>31-06-2024</td>
-              <td style={{textAlign: 'center'}}>005630</td>
-              <td style={{textAlign: 'center'}}>005655</td>
-              <td style={{textAlign: 'center'}}>25</td>
-              <td style={{textAlign: 'center'}}>
-                <button className="btn-edit">Sửa</button>                
-              </td>
-            </tr>
-            <tr>
-              <td style={{textAlign: 'center'}}>6</td>
-              <td style={{textAlign: 'center'}}>Tuyến đọc 1</td>
-              <td style={{textAlign: 'center'}}>T7 - 2024</td>
-              <td style={{textAlign: 'center'}}>01-07-2024</td>
-              <td style={{textAlign: 'center'}}>30-07-2024</td>
-              <td style={{textAlign: 'center'}}>005655</td>
-              <td style={{textAlign: 'center'}}>005680</td>
-              <td style={{textAlign: 'center'}}>25</td>
-              <td style={{textAlign: 'center'}}>
-                <button className="btn-edit">Sửa</button>                
-              </td>
-            </tr>
+            {ghiChiSoElements}            
           </tbody>
         </table>
       </div>

@@ -5,18 +5,23 @@ import { useNavigate } from 'react-router-dom'
 export default function ThemLoaiKhachHang(){
   const navigate = useNavigate();
   const [loaiKhachHang, setLoaiKhachHang] = useState('');
+  const [errors, setErrors] = useState(null);
 
   function handleChange(e){
-    setLoaiKhachHang(e.target.value);
+    setLoaiKhachHang(e.target.value); 
+    setErrors(null);
   }
 
   const themLoaiKhachHang = async() => {
     const formData = new FormData();
     formData.append('ten_loai_khach_hang', loaiKhachHang)
-    const response = await axios.post('http://127.0.0.1:8000/api/loai_khach_hang', formData)
-    if(response){
+  
+    try{
+      const response = await axios.post('http://127.0.0.1:8000/api/loai_khach_hang', formData)
       console.log(response.data.message)
       navigate('/loai_khach_hang');
+    }catch(er){
+      setErrors(er.response.data.error)
     }
   }
 
@@ -31,6 +36,7 @@ export default function ThemLoaiKhachHang(){
         <h2>Thêm loại khách hàng</h2>        
       </div>
       <div className="card animated fadeInDown">
+        {errors && <div className="error">{errors}</div>}
         <form onSubmit={handleSubmit}>
           <input 
             value={loaiKhachHang}

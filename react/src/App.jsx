@@ -28,8 +28,8 @@ export default function App() {
         <Route path='/gia/sua/:id' element={<SuaGiaNuoc />} />
         <Route path='/ghi_chi_so_dong_ho_khoi' element={<GhiChiSoDongHoKhoi />} />
         <Route path='/ghi_chi_so_dong_ho_khoi/ghi' element={<GhiChiSo />} />
-        <Route path='/ghi_chi_so_dong_ho_khoi/sua' element={<SuaGhiChiSo />} />
-        <Route path='/ghi_chi_so_dong_ho_khoi/lich_su' element={<LichSuGhiChiSo />} />
+        <Route path='/ghi_chi_so_dong_ho_khoi/lich_su/:id/ghi_chi_so_dong_ho_khoi/sua/:id' element={<SuaGhiChiSo />} />
+        <Route path='/ghi_chi_so_dong_ho_khoi/lich_su/:id' element={<LichSuGhiChiSo />} />
       </Routes>      
     </>    
   )

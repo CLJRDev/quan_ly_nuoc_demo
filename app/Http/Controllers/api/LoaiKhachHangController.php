@@ -4,8 +4,11 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\LoaiKhachHang;
+use App\Models\NhomGia;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+
 
 class LoaiKhachHangController extends Controller
 {
@@ -28,14 +31,21 @@ class LoaiKhachHangController extends Controller
   public function store(Request $request)
   {
     //Validation
-    $formFields = $request->validate([
-      'ten_loai_khach_hang' => 'required|unique:loai_khach_hangs,ten_loai_khach_hang'
-    ]);
+    try {
+      $formFields = $request->validate([
+        'ten_loai_khach_hang' => 'required|unique:loai_khach_hangs,ten_loai_khach_hang'
+      ]);
 
-    LoaiKhachHang::create($formFields);
-    return response()->json([
-      'message' => 'Created successfully!'
-    ]);
+      LoaiKhachHang::create($formFields);
+      return response()->json([
+        'message' => 'Created successfully!'
+      ]);
+    } catch (ValidationException $e) {
+
+      return response()->json([
+        'error' => 'Tên loại khách hàng đã tồn tại. Vui lòng chọn tên khác!'
+      ], 422);
+    }
   }
 
   /**
@@ -58,17 +68,24 @@ class LoaiKhachHangController extends Controller
    */
   public function update(Request $request, LoaiKhachHang $loaiKhachHang)
   {
-    $formFields = $request->validate([
-      'ten_loai_khach_hang' => [
-        'required',
-        Rule::unique('loai_khach_hangs', 'ten_loai_khach_hang')->ignore($loaiKhachHang->id)
-      ]
-    ]);
+    try {
+      $formFields = $request->validate([
+        'ten_loai_khach_hang' => [
+          'required',
+          Rule::unique('loai_khach_hangs', 'ten_loai_khach_hang')->ignore($loaiKhachHang->id)
+        ]
+      ]);
 
-    $loaiKhachHang->update($formFields);
-    return response()->json([
-      'message' => 'Updated successfully!'
-    ]);
+      $loaiKhachHang->update($formFields);
+      return response()->json([
+        'message' => 'Updated successfully!'
+      ]);
+    } catch (ValidationException $e) {
+
+      return response()->json([
+        'error' => 'Tên loại khách hàng đã tồn tại. Vui lòng chọn tên khác.'
+      ], 422);
+    }
   }
 
   /**
@@ -77,9 +94,17 @@ class LoaiKhachHangController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function destroy(LoaiKhachHang $loaiKhachHang)
+  public function destroy(LoaiKhachHang $loai_khach_hang)
   {
-    $loaiKhachHang->delete();
+    $nhom_gia = NhomGia::where('ma_loai_khach_hang', $loai_khach_hang->id)->first();
+
+    if ($nhom_gia) {
+      return response()->json([
+        'error' => "Không thể xóa loại khách hàng '{$loai_khach_hang->ten_loai_khach_hang}' vì vẫn có nhóm giá liên quan!"
+      ], 422);
+    }
+
+    $loai_khach_hang->delete();
     return response()->json([
       'message' => 'Deleted successfully!'
     ]);

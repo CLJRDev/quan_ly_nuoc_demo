@@ -28,9 +28,17 @@ body{
   font-weight: bold;
 }
 
+.error{  
+  color: #fff;
+  background-color: rgb(231, 31, 31);
+  padding: 10px 5px; 
+  text-align: center;
+  margin-bottom: 5px;
+}
+
 .dashboard{
   width: 250px;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
@@ -74,7 +82,8 @@ input:focus, select:focus {
 .btn,
 .btn-add,
 .btn-edit,
-.btn-delete{
+.btn-delete,
+.btn-edit-disable{
   font-family: "Roboto", sans-serif;
   outline: 0;
   background: #5b08a7;
@@ -88,9 +97,14 @@ input:focus, select:focus {
   cursor: pointer;
 }
 
+.btn-edit-disable{
+  background: #b72424;
+}
+
 .btn-add,
 .btn-edit,
-.btn-delete{
+.btn-delete,
+.btn-edit-disable{
   padding: 0.5rem 0.75rem;
   font-size: 14px;
   border-radius: 4px;

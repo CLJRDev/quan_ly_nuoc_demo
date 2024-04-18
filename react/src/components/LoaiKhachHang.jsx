@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom"
 import axios from "axios"
 import { useState, useEffect } from "react"
+import {format} from 'date-fns'
 
 
 export default function DanhMucLoaiKhachHang(){
   const [loaiKhachHangs, setLoaiKhachHangs] = useState(null);
+  const [errors, setErrors] = useState(null)
 
   useEffect(() => {
     axios.get('http://127.0.0.1:8000/api/loai_khach_hang')
@@ -25,6 +27,10 @@ export default function DanhMucLoaiKhachHang(){
       setLoaiKhachHangs(loaiKhachHangs.filter(loaiKhachHang => {
         return loaiKhachHang.id != id;
       }));
+      setErrors(null)
+    })
+    .catch(error => {
+      setErrors(error.response.data.error);
     });
   }
 
@@ -36,7 +42,7 @@ export default function DanhMucLoaiKhachHang(){
     return <tr key={loaiKhachHang.id}>
         <td style={{textAlign: 'center'}}>{loaiKhachHang.id}</td>
         <td>{loaiKhachHang.ten_loai_khach_hang}</td>
-        <td>{loaiKhachHang.created_at}</td>
+        <td style={{textAlign: 'center'}}>{format(new Date(loaiKhachHang.created_at), 'dd-MM-yyyy')}</td>
         <td style={{textAlign: 'center'}}>
           <Link className="btn-edit" to={`/loai_khach_hang/sua/${loaiKhachHang.id}`}>Sửa</Link>
           &nbsp;
@@ -52,12 +58,13 @@ export default function DanhMucLoaiKhachHang(){
         <Link to='/loai_khach_hang/them' className="btn-add">Thêm mới</Link>
       </div>
       <div className="card animated fadeInDown">
+        {errors && <div className="error">{errors}</div>}
         <table>
           <thead>
             <tr>
               <th style={{width: '50px', textAlign: 'center'}}>ID</th>
               <th>Tên loại khách hàng</th>
-              <th>Ngày tạo</th>
+              <th style={{width: '150px', textAlign: 'center'}}>Ngày tạo</th>
               <th style={{width: '150px', textAlign: 'center'}}>Hành động</th>
             </tr>
           </thead>

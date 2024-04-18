@@ -50,11 +50,13 @@ export default function ThemGiaNuoc(){
     formData.append('gia_tu_20m_den_30m', nhomGia.gia_tu_20m_den_30m)
     formData.append('gia_tren_30m', nhomGia.gia_tren_30m)
     formData.append('ma_loai_khach_hang', nhomGia.ma_loai_khach_hang)
-    const response = await axios.post('http://127.0.0.1:8000/api/nhom_gia', formData)
-
-    if(response){
+    
+    try{
+      const response = await axios.post('http://127.0.0.1:8000/api/nhom_gia', formData)    
       console.log(response.data.message)
       navigate('/gia');
+    }catch(er){
+      console.log(er.response.data.error);
     }
   }
 
